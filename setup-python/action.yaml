@@ -1,0 +1,108 @@
+name: "Setup Python"
+description: "Setup python, install poetry, install dependencies, cache."
+
+inputs:
+  dev:
+    description: "Install developer dependencies."
+    required: true
+    default: "false"
+
+  python_version:
+    description: "The python version to use."
+    required: true
+
+  working_dir:
+    description: "The location to run the poetry commands in"
+    required: true
+    default: "."
+
+  use_cache:
+    description: "Enable the usage of cache for this action"
+    required: true
+    default: "true"
+
+outputs:
+  cache-hit:
+    description: "Was there a cache hit for the python cache."
+    value: ${{ steps.python_cache.outputs.cache-hit }}
+
+runs:
+  using: "composite"
+
+  steps:
+    # Checkout the code to get access to project files such as poetry and pre-commit configs
+    - uses: actions/checkout@v2
+
+    - name: Setup Python Settings
+      shell: bash
+      run: |
+        # Configure pip to cache dependencies and do a user install
+        echo "PIP_NO_CACHE_DIR=false" >> $GITHUB_ENV
+        echo "PIP_USER=1" >> $GITHUB_ENV
+
+        # Make sure package manager does not use virtualenv
+        echo "POETRY_VIRTUALENVS_CREATE=false" >> $GITHUB_ENV
+
+        # Specify explicit paths for python dependencies and the pre-commit
+        # environment, so we know which directories to cache
+        echo "POETRY_CACHE_DIR=${{ github.workspace }}/.cache/py-user-base" >> $GITHUB_ENV
+        echo "PRE_COMMIT_HOME=${{ github.workspace }}/.cache/pre-commit-cache" >> $GITHUB_ENV
+
+        USERBASE=${{ github.workspace }}/.cache/py-user-base
+        echo "PYTHONUSERBASE=$USERBASE" >> $GITHUB_ENV
+        echo "$USERBASE/bin" >> $GITHUB_PATH
+
+    # Install python in our workflow
+    - name: Setup python
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ inputs.python_version }}
+
+    # Specify directories that require caching
+    - name: Python Dependency Caching
+      uses: actions/cache@v2
+      id: python_cache
+      with:
+        path: ${{ env.PYTHONUSERBASE }}
+        key: "python-${{ runner.os }}-${{ env.PYTHONUSERBASE }}-\
+        v1.0.0-\
+        ${{ inputs.python_version }}-${{ inputs.dev }}-${{ inputs.working_dir }}\
+        ${{ hashFiles('./pyproject.toml', './poetry.lock') }}"
+
+    # Cache pre-commit independently of other cache
+    - name: Pre-commit Environment Caching
+      uses: actions/cache@v2
+      with:
+        path: ${{ env.PRE_COMMIT_HOME }}
+        key: "precommit-${{ runner.os }}-${{ env.PRE_COMMIT_HOME }}-\
+        v1.0.0-\
+        ${{ inputs.python_version }}-${{ inputs.dev }}-${{ inputs.working_dir }}\
+        ${{ hashFiles('./.pre-commit-config.yaml') }}"
+
+    - name: Install dependencies
+      shell: bash
+      run: |
+        if [ "${{ steps.python_cache.outputs.cache-hit }}" = "true" ]; then
+          if [ "${{ inputs.use_cache }}" = "false" ]; then
+            echo "Caching not enbaled, deleting cache."
+            rm -rf ${{ env.PYTHONUSERBASE }}
+            rm -rf ${{ env.PRE_COMMIT_HOME }}
+          else
+            echo "Cache hit, skipping install."
+            exit
+          fi
+        fi
+
+        echo "::group::Install Poetry"
+        pip install poetry
+        echo "::endgroup::"
+
+        echo "::group::Install Dependencies"
+        cd ${{ inputs.working_dir }}
+
+        if [ "${{ inputs.dev }}" = "true" ]; then
+          poetry install
+        else
+          poetry install --no-dev
+        fi
+        echo "::endgroup::"

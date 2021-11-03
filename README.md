@@ -31,11 +31,15 @@ Read more about contributing in the [contributing guidelines](.github/contributi
 ### Index
 An index of all the currently maintained scripts, their description, and the latest version.
 
-| Name                         | Version | Status | Description                          |
-| ---------------------------- | ------- | ------ | ------------------------------------ |
-
+| Name                           | Version | Status                         | Description                                          |
+| ------------------------------ | ------- | ----------------------------- | ---------------------------------------------------- |
+| [Setup Python](./setup-python) | 1.0.0   | [![tests][sp_badge]][sp_link] | Setup a [poetry][Poetry]-managed python environment. |
 
 
 [License]: https://shields.io/github/license/HassanAbouelela/actions
 [Semver-Logo]: https://img.shields.io/badge/versioning-semver-informational
 [Semver]: https://semver.org/
+[Poetry]: https://python-poetry.org/
+
+[sp_badge]: https://img.shields.io/github/workflow/status/HassanAbouelela/actions/Test%20Setup-Python/main?label=Tests
+[sp_link]: https://github.com/HassanAbouelela/actions/actions/workflows/test_setup_python.yaml?query=branch%3Amain

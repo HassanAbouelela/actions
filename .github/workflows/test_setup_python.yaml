@@ -1,0 +1,107 @@
+name: "Test Setup-Python"
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - setup_python/**
+      - .github/workflows/test_setup_python.yaml
+  push:
+    paths:
+      - setup_python/**
+      - .github/workflows/test_setup_python.yaml
+
+jobs:
+  no_dev:
+    name: Test No Developer Dependencies
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Python
+        uses: ./setup-python
+        with:
+          dev: false
+          python_version: 3.9
+          working_dir: setup-python/tests/
+          use_cache: false  # Disable caching to ensure we test the installation logic
+
+      - name: Test Non-Developer Dependency
+        run: mypy -V
+
+      - name: Test Developer Dependency
+        run: |
+          if command -v black; then
+            echo "Black was installed in an incorrect context."
+            exit 1
+          fi
+
+  dev:
+    name: Test Developer Dependencies
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Python
+        uses: ./setup-python
+        with:
+          dev: true
+          python_version: 3.9
+          working_dir: setup-python/tests/
+          use_cache: false  # Disable caching to ensure we test the installation logic
+
+      - name: Test Non-Developer Dependency
+        run: mypy -V
+
+      - name: Test Developer Dependency
+        id: black
+        run: black --version
+
+  cache_hit_pre:
+    name: Setup Cache
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Python
+        uses: ./setup-python
+        with:
+          dev: false
+          python_version: 3.9
+          working_dir: setup-python/tests/
+
+  cache_hit:
+    name: Test Cache Hit
+    runs-on: ubuntu-latest
+    needs: cache_hit_pre
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Python
+        id: python
+        uses: ./setup-python
+        with:
+          dev: false
+          python_version: 3.9
+          working_dir: setup-python/tests/
+
+      - name: Check For Cache hit
+        run: |
+          if [ "${{ steps.python.outputs.cache-hit }}" != "true" ]; then
+            echo "No cache-hit when expected"
+            exit 1
+          else
+            echo "Cache found"
+            exit 0
+          fi
+
+      - name: Check Cache Content
+        run: |
+          if command -v black; then
+            echo "Black was installed in an incorrect context."
+            exit 1
+          fi
