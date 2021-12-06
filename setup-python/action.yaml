@@ -26,6 +26,11 @@ inputs:
     required: false
     default: ""
 
+  poetry_version:
+    description: "The poetry version to install (passed to pip install)"
+    required: false
+    default: "poetry"
+
 outputs:
   cache-hit:
     description: "Was there a cache hit for the python cache."
@@ -58,7 +63,7 @@ runs:
           ~/.cache/py-user-base
         key: "python-${{ runner.os }}-${{ env.PYTHONUSERBASE }}-\
         v1.2.1-\
-        ${{ steps.python_setup.outputs.python-version }}-${{ inputs.dev }}-${{ inputs.working_dir }}\
+        ${{ steps.python_setup.outputs.python-version }}-${{ inputs.dev }}-${{ inputs.working_dir }}-${{ inputs.poetry_version }}\
         ${{ hashFiles('./pyproject.toml', './poetry.lock') }}"
 
     # Cache pre-commit independently of other cache
@@ -68,14 +73,14 @@ runs:
         path: ~/.cache/pre-commit
         key: "precommit-${{ runner.os }}-${{ env.PRE_COMMIT_HOME }}-\
         v1.2.1-\
-        ${{ steps.python_setup.outputs.python-version }}-${{ inputs.dev }}-${{ inputs.working_dir }}\
+        ${{ steps.python_setup.outputs.python-version }}-${{ inputs.dev }}-${{ inputs.working_dir }}-${{ inputs.poetry_version }}\
         ${{ hashFiles('./.pre-commit-config.yaml') }}"
 
     - name: Install Poetry
       shell: bash
       run: |
         echo "::group::Install Poetry"
-        pip install poetry
+        pip install ${{ inputs.poetry_version }}
         echo "::endgroup::"
 
     - name: Install dependencies
@@ -107,3 +112,4 @@ runs:
       run: |
         cd ${{ inputs.working_dir }}
         echo "$(python -m poetry env info --path)/bin" >> $GITHUB_PATH
+        python -m poetry -V
