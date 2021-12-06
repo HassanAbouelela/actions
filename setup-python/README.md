@@ -23,6 +23,7 @@ The following inputs are required to use this action.
 | python_version   | string | N/A     | Specify the python version passed to the `actions/setup-python` action.                                                                                                       |
 | working_dir      | path   | `.`     | The directory to run the `poetry install` command in. By default, this will just be the root directory.                                                                       |
 | use_cache        | bool   | true    | Enable or disable the usage of cache, even if it is available.                                                                                                                |
+| poetry_version   | string | latest  | The poetry version to install. It is passed to pip install directly.                                                                                                          |
 
 ### Outputs
 The following outputs are produced by the action:

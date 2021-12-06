@@ -21,6 +21,11 @@ inputs:
     required: true
     default: "true"
 
+  poetry_version:
+    description: "The poetry version to install (passed to pip install)"
+    required: false
+    default: "poetry"
+
 outputs:
   cache-hit:
     description: "Was there a cache hit for the python cache."
@@ -66,7 +71,7 @@ runs:
         path: ${{ env.PYTHONUSERBASE }}
         key: "python-${{ runner.os }}-${{ env.PYTHONUSERBASE }}-\
         v1.0.0-\
-        ${{ inputs.python_version }}-${{ inputs.dev }}-${{ inputs.working_dir }}\
+        ${{ inputs.python_version }}-${{ inputs.dev }}-${{ inputs.working_dir }}-${{ inputs.poetry_version }}\
         ${{ hashFiles('./pyproject.toml', './poetry.lock') }}"
 
     # Cache pre-commit independently of other cache
@@ -76,7 +81,7 @@ runs:
         path: ${{ env.PRE_COMMIT_HOME }}
         key: "precommit-${{ runner.os }}-${{ env.PRE_COMMIT_HOME }}-\
         v1.0.0-\
-        ${{ inputs.python_version }}-${{ inputs.dev }}-${{ inputs.working_dir }}\
+        ${{ inputs.python_version }}-${{ inputs.dev }}-${{ inputs.working_dir }}-${{ inputs.poetry_version }}\
         ${{ hashFiles('./.pre-commit-config.yaml') }}"
 
     - name: Install dependencies
@@ -94,7 +99,7 @@ runs:
         fi
 
         echo "::group::Install Poetry"
-        pip install poetry
+        pip install ${{ inputs.poetry_version }}
         echo "::endgroup::"
 
         echo "::group::Install Dependencies"
