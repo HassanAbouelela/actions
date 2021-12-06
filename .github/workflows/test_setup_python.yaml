@@ -105,3 +105,33 @@ jobs:
             echo "Black was installed in an incorrect context."
             exit 1
           fi
+
+  versions:
+    name: Test Different PyPI Versions
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        version:
+          - "poetry~=1.1"
+          - "git+https://github.com/python-poetry/poetry.git@master"
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Python
+        uses: ./setup-python
+        with:
+          dev: false
+          python_version: 3.9
+          poetry_version: ${{ matrix.version }}
+          working_dir: setup-python/tests/
+
+      - name: Check Installation
+        if: ${{ !contains(matrix.version, 'git') }}
+        run: poetry --version | awk '!/${{ matrix.version }}/{exit 1}'
+
+      # The git version doesn't have any special identifiers to check
+      # so just check that the installation worked
+      - name: Check Installation (Git)
+        if: ${{ contains(matrix.version, 'git') }}
+        run: poetry --version
