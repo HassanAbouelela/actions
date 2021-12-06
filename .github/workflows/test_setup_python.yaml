@@ -126,3 +126,28 @@ jobs:
 
       - name: Test Optional Dependency
         run: python -c "import six"
+
+  versions:
+    name: Test Different Poetry Versions
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        version:
+          - "poetry==1.1.*"
+          - "poetry==1.2.*"
+          - "git+https://github.com/python-poetry/poetry.git@master"
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Python
+        uses: ./setup-python
+        with:
+          dev: false
+          python_version: 3.9
+          poetry_version: ${{ matrix.version }}
+          working_dir: setup-python/tests/
+          use_cache: false
+
+      - name: Check Installation
+        run: poetry --version
