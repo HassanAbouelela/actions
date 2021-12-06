@@ -4,11 +4,11 @@ on:
   workflow_dispatch:
   pull_request:
     paths:
-      - setup_python/**
+      - setup-python/**
       - .github/workflows/test_setup_python.yaml
   push:
     paths:
-      - setup_python/**
+      - setup-python/**
       - .github/workflows/test_setup_python.yaml
 
 jobs:
