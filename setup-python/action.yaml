@@ -21,6 +21,11 @@ inputs:
     required: true
     default: "true"
 
+  install_args:
+    description: "Extra arguments passed to the install command"
+    required: false
+    default: ""
+
 outputs:
   cache-hit:
     description: "Was there a cache hit for the python cache."
@@ -65,7 +70,7 @@ runs:
       with:
         path: ${{ env.PYTHONUSERBASE }}
         key: "python-${{ runner.os }}-${{ env.PYTHONUSERBASE }}-\
-        v1.0.0-\
+        v1.1.0-\
         ${{ inputs.python_version }}-${{ inputs.dev }}-${{ inputs.working_dir }}\
         ${{ hashFiles('./pyproject.toml', './poetry.lock') }}"
 
@@ -75,7 +80,7 @@ runs:
       with:
         path: ${{ env.PRE_COMMIT_HOME }}
         key: "precommit-${{ runner.os }}-${{ env.PRE_COMMIT_HOME }}-\
-        v1.0.0-\
+        v1.1.0-\
         ${{ inputs.python_version }}-${{ inputs.dev }}-${{ inputs.working_dir }}\
         ${{ hashFiles('./.pre-commit-config.yaml') }}"
 
@@ -101,8 +106,8 @@ runs:
         cd ${{ inputs.working_dir }}
 
         if [ "${{ inputs.dev }}" = "true" ]; then
-          poetry install
+          poetry install ${{ inputs.install_args }}
         else
-          poetry install --no-dev
+          poetry install ${{ inputs.install_args }} --no-dev
         fi
         echo "::endgroup::"
