@@ -105,3 +105,21 @@ jobs:
             echo "Black was installed in an incorrect context."
             exit 1
           fi
+
+  install_args:
+    name: Test Optional Install Args
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Python
+        uses: ./setup-python
+        with:
+          python_version: 3.9
+          working_dir: setup-python/tests/
+          use_cache: false  # Disable caching to ensure we test the installation logic
+          install_args: "-E extras"
+
+      - name: Test Optional Dependency
+        run: python -c "import six"

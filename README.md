@@ -12,7 +12,7 @@ linked in the index below.
 > {name}_v{version}
 
 Example:
-> setup-python_v1.0.0
+> setup-python_v1.1.0
 
 
 ### Support Policy
@@ -31,9 +31,9 @@ Read more about contributing in the [contributing guidelines](.github/contributi
 ### Index
 An index of all the currently maintained scripts, their description, and the latest version.
 
-| Name                           | Version | Status                         | Description                                          |
-| ------------------------------ | ------- | ----------------------------- | ---------------------------------------------------- |
-| [Setup Python](./setup-python) | 1.0.0   | [![tests][sp_badge]][sp_link] | Setup a [poetry][Poetry]-managed python environment. |
+| Name                           | Version | Status                        | Description                                          |
+|--------------------------------|---------|-------------------------------|------------------------------------------------------|
+| [Setup Python](./setup-python) | 1.1.0   | [![tests][sp_badge]][sp_link] | Setup a [poetry][Poetry]-managed python environment. |
 
 
 [License]: https://shields.io/github/license/HassanAbouelela/actions
