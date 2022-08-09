@@ -74,8 +74,8 @@ runs:
       with:
         path: ${{ env.PYTHONUSERBASE }}
         key: "python-${{ runner.os }}-${{ env.PYTHONUSERBASE }}-\
-        v1.1.0-\
-        ${{ inputs.python_version }}-${{ inputs.dev }}-${{ inputs.working_dir }}\
+        v1.2.0-\
+        ${{ steps.python_setup.outputs.python-version }}-${{ inputs.dev }}-${{ inputs.working_dir }}\
         ${{ hashFiles('./pyproject.toml', './poetry.lock') }}"
 
     # Cache pre-commit independently of other cache
@@ -84,8 +84,8 @@ runs:
       with:
         path: ${{ env.PRE_COMMIT_HOME }}
         key: "precommit-${{ runner.os }}-${{ env.PRE_COMMIT_HOME }}-\
-        v1.1.0-\
-        ${{ inputs.python_version }}-${{ inputs.dev }}-${{ inputs.working_dir }}\
+        v1.2.0-\
+        ${{ steps.python_setup.outputs.python-version }}-${{ inputs.dev }}-${{ inputs.working_dir }}\
         ${{ hashFiles('./.pre-commit-config.yaml') }}"
 
     - name: Install dependencies
