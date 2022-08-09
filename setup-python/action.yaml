@@ -30,6 +30,9 @@ outputs:
   cache-hit:
     description: "Was there a cache hit for the python cache."
     value: ${{ steps.python_cache.outputs.cache-hit }}
+  python-version:
+    description: "The full Python semver version used."
+    value: ${{ steps.python_setup.outputs.python-version }}
 
 runs:
   using: "composite"
@@ -60,6 +63,7 @@ runs:
     # Install python in our workflow
     - name: Setup python
       uses: actions/setup-python@v2
+      id: python_setup
       with:
         python-version: ${{ inputs.python_version }}
 
