@@ -30,6 +30,9 @@ outputs:
   cache-hit:
     description: "Was there a cache hit for the python cache."
     value: ${{ steps.python_cache.outputs.cache-hit }}
+  python-version:
+    description: "The full Python semver version used."
+    value: ${{ steps.python_setup.outputs.python-version }}
 
 runs:
   using: "composite"
@@ -60,6 +63,7 @@ runs:
     # Install python in our workflow
     - name: Setup python
       uses: actions/setup-python@v2
+      id: python_setup
       with:
         python-version: ${{ inputs.python_version }}
 
@@ -70,8 +74,8 @@ runs:
       with:
         path: ${{ env.PYTHONUSERBASE }}
         key: "python-${{ runner.os }}-${{ env.PYTHONUSERBASE }}-\
-        v1.1.0-\
-        ${{ inputs.python_version }}-${{ inputs.dev }}-${{ inputs.working_dir }}\
+        v1.2.0-\
+        ${{ steps.python_setup.outputs.python-version }}-${{ inputs.dev }}-${{ inputs.working_dir }}\
         ${{ hashFiles('./pyproject.toml', './poetry.lock') }}"
 
     # Cache pre-commit independently of other cache
@@ -80,8 +84,8 @@ runs:
       with:
         path: ${{ env.PRE_COMMIT_HOME }}
         key: "precommit-${{ runner.os }}-${{ env.PRE_COMMIT_HOME }}-\
-        v1.1.0-\
-        ${{ inputs.python_version }}-${{ inputs.dev }}-${{ inputs.working_dir }}\
+        v1.2.0-\
+        ${{ steps.python_setup.outputs.python-version }}-${{ inputs.dev }}-${{ inputs.working_dir }}\
         ${{ hashFiles('./.pre-commit-config.yaml') }}"
 
     - name: Install dependencies

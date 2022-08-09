@@ -8,7 +8,7 @@ It also handles caching of pre-commit if you happen to be using that.
 You can use this action as follows:
 ```yaml
 - name: Install Python Dependencies
-  uses: HassanAbouelela/actions/setup-python@setup-python_v1.1.0
+  uses: HassanAbouelela/actions/setup-python@setup-python_v1.2.0
   with:
     dev: false
     python_version: 3.9
@@ -28,9 +28,10 @@ The following inputs are required to use this action.
 ### Outputs
 The following outputs are produced by the action:
 
-| Name      | Type | Description                                       |
-|-----------|------|---------------------------------------------------|
-| cache-hit | bool | True if a cache was used to restore dependencies. |
+| Name           | Type   | Description                                       |
+|----------------|--------|---------------------------------------------------|
+| cache-hit      | bool   | True if a cache was used to restore dependencies. |
+| python-version | string | The full Python semver version used.              |
 
 
 [badge]: https://img.shields.io/github/workflow/status/HassanAbouelela/actions/Test%20Setup-Python/main?label=Tests
