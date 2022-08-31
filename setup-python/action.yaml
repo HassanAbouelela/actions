@@ -74,7 +74,7 @@ runs:
       with:
         path: ${{ env.PYTHONUSERBASE }}
         key: "python-${{ runner.os }}-${{ env.PYTHONUSERBASE }}-\
-        v1.2.0-\
+        v1.2.1-\
         ${{ steps.python_setup.outputs.python-version }}-${{ inputs.dev }}-${{ inputs.working_dir }}\
         ${{ hashFiles('./pyproject.toml', './poetry.lock') }}"
 
@@ -84,7 +84,7 @@ runs:
       with:
         path: ${{ env.PRE_COMMIT_HOME }}
         key: "precommit-${{ runner.os }}-${{ env.PRE_COMMIT_HOME }}-\
-        v1.2.0-\
+        v1.2.1-\
         ${{ steps.python_setup.outputs.python-version }}-${{ inputs.dev }}-${{ inputs.working_dir }}\
         ${{ hashFiles('./.pre-commit-config.yaml') }}"
 
@@ -103,7 +103,7 @@ runs:
         fi
 
         echo "::group::Install Poetry"
-        pip install poetry
+        pip install poetry==1.1.*
         echo "::endgroup::"
 
         echo "::group::Install Dependencies"
