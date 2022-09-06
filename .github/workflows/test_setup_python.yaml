@@ -72,6 +72,7 @@ jobs:
           dev: false
           python_version: 3.9
           working_dir: setup-python/tests/
+          use_cache: false
 
   cache_hit:
     name: Test Cache Hit
