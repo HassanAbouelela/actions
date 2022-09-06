@@ -101,6 +101,11 @@ jobs:
 
       - name: Check Cache Content
         run: |
+          if ! command -v mypy; then
+            echo "Expected mypy to be installed in the cache, was not found."
+            exit 1
+          fi
+
           if command -v black; then
             echo "Black was installed in an incorrect context."
             exit 1

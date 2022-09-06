@@ -41,28 +41,9 @@ runs:
     # Checkout the code to get access to project files such as poetry and pre-commit configs
     - uses: actions/checkout@v2
 
-    - name: Setup Python Settings
-      shell: bash
-      run: |
-        # Configure pip to cache dependencies and do a user install
-        echo "PIP_NO_CACHE_DIR=false" >> $GITHUB_ENV
-        echo "PIP_USER=1" >> $GITHUB_ENV
-
-        # Make sure package manager does not use virtualenv
-        echo "POETRY_VIRTUALENVS_CREATE=false" >> $GITHUB_ENV
-
-        # Specify explicit paths for python dependencies and the pre-commit
-        # environment, so we know which directories to cache
-        echo "POETRY_CACHE_DIR=${{ github.workspace }}/.cache/py-user-base" >> $GITHUB_ENV
-        echo "PRE_COMMIT_HOME=${{ github.workspace }}/.cache/pre-commit-cache" >> $GITHUB_ENV
-
-        USERBASE=${{ github.workspace }}/.cache/py-user-base
-        echo "PYTHONUSERBASE=$USERBASE" >> $GITHUB_ENV
-        echo "$USERBASE/bin" >> $GITHUB_PATH
-
     # Install python in our workflow
     - name: Setup python
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v4
       id: python_setup
       with:
         python-version: ${{ inputs.python_version }}
@@ -72,7 +53,7 @@ runs:
       uses: actions/cache@v2
       id: python_cache
       with:
-        path: ${{ env.PYTHONUSERBASE }}
+        path: ~/.cache/pypoetry
         key: "python-${{ runner.os }}-${{ env.PYTHONUSERBASE }}-\
         v1.2.1-\
         ${{ steps.python_setup.outputs.python-version }}-${{ inputs.dev }}-${{ inputs.working_dir }}\
@@ -82,7 +63,7 @@ runs:
     - name: Pre-commit Environment Caching
       uses: actions/cache@v2
       with:
-        path: ${{ env.PRE_COMMIT_HOME }}
+        path: ~/.cache/pre-commit
         key: "precommit-${{ runner.os }}-${{ env.PRE_COMMIT_HOME }}-\
         v1.2.1-\
         ${{ steps.python_setup.outputs.python-version }}-${{ inputs.dev }}-${{ inputs.working_dir }}\
@@ -103,7 +84,7 @@ runs:
         fi
 
         echo "::group::Install Poetry"
-        pip install poetry==1.1.*
+        pip install poetry
         echo "::endgroup::"
 
         echo "::group::Install Dependencies"
@@ -115,3 +96,9 @@ runs:
           poetry install ${{ inputs.install_args }} --no-dev
         fi
         echo "::endgroup::"
+
+    - name: Configure Path
+      shell: bash
+      run: |
+        cd ${{ inputs.working_dir }}
+        echo "$(poetry env info --path)/bin" >> $GITHUB_PATH
