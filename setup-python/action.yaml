@@ -50,10 +50,12 @@ runs:
 
     # Specify directories that require caching
     - name: Python Dependency Caching
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       id: python_cache
       with:
-        path: ~/.cache/pypoetry
+        path: |
+          ~/.cache/pypoetry
+          ~/.cache/py-user-base
         key: "python-${{ runner.os }}-${{ env.PYTHONUSERBASE }}-\
         v1.2.1-\
         ${{ steps.python_setup.outputs.python-version }}-${{ inputs.dev }}-${{ inputs.working_dir }}\
@@ -61,7 +63,7 @@ runs:
 
     # Cache pre-commit independently of other cache
     - name: Pre-commit Environment Caching
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: ~/.cache/pre-commit
         key: "precommit-${{ runner.os }}-${{ env.PRE_COMMIT_HOME }}-\
