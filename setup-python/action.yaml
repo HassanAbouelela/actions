@@ -71,31 +71,34 @@ runs:
         ${{ steps.python_setup.outputs.python-version }}-${{ inputs.dev }}-${{ inputs.working_dir }}\
         ${{ hashFiles('./.pre-commit-config.yaml') }}"
 
+    - name: Install Poetry
+      shell: bash
+      run: |
+        echo "::group::Install Poetry"
+        pip install poetry
+        echo "::endgroup::"
+
     - name: Install dependencies
       shell: bash
       run: |
         if [ "${{ steps.python_cache.outputs.cache-hit }}" = "true" ]; then
           if [ "${{ inputs.use_cache }}" = "false" ]; then
             echo "Caching not enbaled, deleting cache."
-            rm -rf ${{ env.PYTHONUSERBASE }}
-            rm -rf ${{ env.PRE_COMMIT_HOME }}
+            rm -rf  ~/.cache/py-user-base
+            rm -rf  ~/.cache/pre-commit
           else
             echo "Cache hit, skipping install."
             exit
           fi
         fi
 
-        echo "::group::Install Poetry"
-        pip install poetry
-        echo "::endgroup::"
-
         echo "::group::Install Dependencies"
         cd ${{ inputs.working_dir }}
 
         if [ "${{ inputs.dev }}" = "true" ]; then
-          poetry install ${{ inputs.install_args }}
+          python -m poetry install ${{ inputs.install_args }}
         else
-          poetry install ${{ inputs.install_args }} --no-dev
+          python -m poetry install ${{ inputs.install_args }} --no-dev
         fi
         echo "::endgroup::"
 
@@ -103,4 +106,4 @@ runs:
       shell: bash
       run: |
         cd ${{ inputs.working_dir }}
-        echo "$(poetry env info --path)/bin" >> $GITHUB_PATH
+        echo "$(python -m poetry env info --path)/bin" >> $GITHUB_PATH
