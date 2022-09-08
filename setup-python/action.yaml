@@ -62,7 +62,7 @@ runs:
           ~/.cache/pypoetry
           ~/.cache/py-user-base
         key: "python-${{ runner.os }}-${{ env.PYTHONUSERBASE }}-\
-        v1.2.1-\
+        v1.3.0-\
         ${{ steps.python_setup.outputs.python-version }}-${{ inputs.dev }}-${{ inputs.working_dir }}-${{ inputs.poetry_version }}\
         ${{ hashFiles('./pyproject.toml', './poetry.lock') }}"
 
@@ -72,7 +72,7 @@ runs:
       with:
         path: ~/.cache/pre-commit
         key: "precommit-${{ runner.os }}-${{ env.PRE_COMMIT_HOME }}-\
-        v1.2.1-\
+        v1.3.0-\
         ${{ steps.python_setup.outputs.python-version }}-${{ inputs.dev }}-${{ inputs.working_dir }}-${{ inputs.poetry_version }}\
         ${{ hashFiles('./.pre-commit-config.yaml') }}"
 
