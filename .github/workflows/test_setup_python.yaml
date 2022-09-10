@@ -57,7 +57,9 @@ jobs:
 
       - name: Test Developer Dependency
         id: black
-        run: black --version
+        run: |
+          black --version
+          flake8 --version
 
   cache_hit_pre:
     name: Setup Cache
