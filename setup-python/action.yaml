@@ -21,6 +21,11 @@ inputs:
     required: true
     default: "true"
 
+  cache_pre-commit:
+    description: "Enable caching of pre-commit dependencies"
+    required: false
+    default: "true"
+
   install_args:
     description: "Extra arguments passed to the install command"
     required: false
@@ -61,19 +66,18 @@ runs:
         path: |
           ~/.cache/pypoetry
           ~/.cache/py-user-base
-        key: "python-${{ runner.os }}-${{ env.PYTHONUSERBASE }}-\
-        v1.3.0-\
-        ${{ steps.python_setup.outputs.python-version }}-${{ inputs.dev }}-${{ inputs.working_dir }}-${{ inputs.poetry_version }}\
-        ${{ hashFiles('./pyproject.toml', './poetry.lock') }}"
+        key: "python-${{ runner.os }}-v1.3.1-\
+        ${{ steps.python_setup.outputs.python-version }}-${{ inputs.dev }}-${{ inputs.working_dir }}-${{ inputs.poetry_version }}-\
+        ${{ hashFiles(format('{0}/pyproject.toml', inputs.working_dir), format('{0}/poetry.lock', inputs.working_dir)) }}"
 
     # Cache pre-commit independently of other cache
     - name: Pre-commit Environment Caching
+      if: ${{ inputs.cache_pre-commit }} == true
       uses: actions/cache@v3
       with:
         path: ~/.cache/pre-commit
-        key: "precommit-${{ runner.os }}-${{ env.PRE_COMMIT_HOME }}-\
-        v1.3.0-\
-        ${{ steps.python_setup.outputs.python-version }}-${{ inputs.dev }}-${{ inputs.working_dir }}-${{ inputs.poetry_version }}\
+        key: "precommit-${{ runner.os }}-v1.3.1-\
+        ${{ steps.python_setup.outputs.python-version }}-${{ inputs.dev }}-${{ inputs.working_dir }}-${{ inputs.poetry_version }}-\
         ${{ hashFiles('./.pre-commit-config.yaml') }}"
 
     - name: Install Poetry
@@ -110,6 +114,9 @@ runs:
     - name: Configure Path
       shell: bash
       run: |
+        echo "::group::Configure Path"
         cd ${{ inputs.working_dir }}
         echo "$(python -m poetry env info --path)/bin" >> $GITHUB_PATH
+        echo "Added $(python -m poetry env info --path)/bin to path"
         python -m poetry -V
+        echo "::endgroup::"
