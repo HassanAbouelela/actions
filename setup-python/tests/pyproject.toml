@@ -6,7 +6,7 @@ authors = ["Hassan Abouelela <hassan@hassanamr.com>"]
 license = "MIT"
 
 [tool.poetry.dependencies]
-python = "3.9.*"
+python = "3.10.*"
 mypy = "*"
 six = {version = "*", optional = true}
 
