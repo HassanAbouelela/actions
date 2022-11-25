@@ -8,7 +8,7 @@ It also handles caching of pre-commit if you happen to be using that.
 You can use this action as follows:
 ```yaml
 - name: Install Python Dependencies
-  uses: HassanAbouelela/actions/setup-python@setup-python_v1.3.2
+  uses: HassanAbouelela/actions/setup-python@setup-python_v1.3.3
   with:
     dev: false
     python_version: '3.10'
