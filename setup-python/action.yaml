@@ -66,7 +66,7 @@ runs:
       with:
         path: |
           ~/.cache/pypoetry
-          ~/.cache/py-user-base
+          ~/.cache/pip
         key: "python-${{ runner.os }}-v1.3.4b1-\
         ${{ steps.python_setup.outputs.python-version }}-${{ inputs.dev }}-${{ inputs.working_dir }}-${{ inputs.poetry_version }}-${{ inputs.install_args }}-\
         ${{ hashFiles(format('{0}/pyproject.toml', inputs.working_dir), format('{0}/poetry.lock', inputs.working_dir)) }}"
@@ -94,8 +94,9 @@ runs:
         if [ "${{ steps.python_cache.outputs.cache-hit }}" = "true" ]; then
           if [ "${{ inputs.use_cache }}" = "false" ]; then
             echo "Caching not enbaled, deleting cache."
-            rm -rf  ~/.cache/py-user-base
-            rm -rf  ~/.cache/pre-commit
+            rm -rf ~/.cache/pypoetry
+            rm -rf ~/.cache/pip
+            rm -rf ~/.cache/pre-commit
           else
             echo "Cache hit, skipping install."
             exit
