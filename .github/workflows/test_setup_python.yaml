@@ -65,11 +65,14 @@ jobs:
   cache_hit_pre:
     name: Setup Cache
     runs-on: ubuntu-latest
+    outputs:
+      python_version: ${{ steps.python.outputs.python-version }}
 
     steps:
       - uses: actions/checkout@v3
 
       - name: Setup Python
+        id: python
         uses: ./setup-python
         with:
           install_args: "--without dev"
@@ -90,7 +93,11 @@ jobs:
         uses: ./setup-python
         with:
           install_args: "--without dev"
-          python_version: '3.10'
+          # The python version must explicitly be specified using the setup's version,
+          # since the underlying setup action can sometimes use different patch versions randomly.
+          # I.e: the setup-python action can use 3.10.9 on one run, and 3.10.8 on the next,
+          # even if both are specified as 3.10.
+          python_version: ${{ needs.cache_hit_pre.outputs.python_version }}
           working_dir: setup-python/tests/
 
       - name: Check For Cache hit
