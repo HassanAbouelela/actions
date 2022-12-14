@@ -12,6 +12,7 @@ on:
       - .github/workflows/test_setup_python.yaml
 
 jobs:
+  # The no_dev and dev tests are deprecated and will be removed in v2
   no_dev:
     name: Test No Developer Dependencies
     runs-on: ubuntu-latest
@@ -71,7 +72,7 @@ jobs:
       - name: Setup Python
         uses: ./setup-python
         with:
-          dev: false
+          install_args: "--without dev"
           python_version: '3.10'
           working_dir: setup-python/tests/
           use_cache: false
@@ -88,7 +89,7 @@ jobs:
         id: python
         uses: ./setup-python
         with:
-          dev: false
+          install_args: "--without dev"
           python_version: '3.10'
           working_dir: setup-python/tests/
 
@@ -145,7 +146,6 @@ jobs:
       - name: Setup Python
         uses: ./setup-python
         with:
-          dev: false
           python_version: '3.10'
           poetry_version: ${{ matrix.version }}
           working_dir: setup-python/tests/

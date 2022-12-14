@@ -10,22 +10,22 @@ You can use this action as follows:
 - name: Install Python Dependencies
   uses: HassanAbouelela/actions/setup-python@setup-python_v1.3.3
   with:
-    dev: false
+    install_args: "--without dev"
     python_version: '3.10'
 ```
 
 ### Inputs
 The following inputs are required to use this action.
 
-| Name             | Type   | Default | Description                                                                                                                                                                   |
-|------------------|--------|---------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| dev              | bool   | false   | Indicate whether dev dependencies should be installed. If false, the `--no-dev` flag is passed to poetry. Despite having a default, it's good practice to explicitly set one. |
-| python_version   | string |         | Specify the python version passed to the `actions/setup-python` action.                                                                                                       |
-| poetry_version   | string | poetry  | The version of poetry to install and use. This is passed directly to pip, so you can specify any pattern, such as `poetry~=1.2` or `poetry==1.1.15`.                          |
-| working_dir      | path   | `.`     | The directory to run the `poetry install` command in. By default, this will just be the root directory.                                                                       |
-| use_cache        | bool   | true    | Enable or disable the usage of cache, even if it is available.                                                                                                                |
-| cache_pre-commit | bool   | true    | Enable caching and restoring pre-commit installs. Only a pre-commit config at the root workspace will be cached properly.                                                     |
-| install_args     | string |         | A string placed after the `poetry install` command, which can contain extra options.                                                                                          |
+| Name             | Type   | Default | Description                                                                                                                                          |
+|------------------|--------|---------|------------------------------------------------------------------------------------------------------------------------------------------------------|
+| python_version   | string |         | Specify the python version passed to the `actions/setup-python` action.                                                                              |
+| poetry_version   | string | poetry  | The version of poetry to install and use. This is passed directly to pip, so you can specify any pattern, such as `poetry~=1.2` or `poetry==1.1.15`. |
+| working_dir      | path   | `.`     | The directory to run the `poetry install` command in. By default, this will just be the root directory.                                              |
+| use_cache        | bool   | true    | Enable or disable the usage of cache, even if it is available.                                                                                       |
+| cache_pre-commit | bool   | true    | Enable caching and restoring pre-commit installs. Only a pre-commit config at the root workspace will be cached properly.                            |
+| install_args     | string |         | A string placed after the `poetry install` command, which can contain extra options.                                                                 |
+| dev (deprecated) | bool   | true    | This argument is deprecated. Please use `install_args` with the appropriate options. This option will be removed in the next major release.          |
 
 ### Outputs
 The following outputs are produced by the action:
