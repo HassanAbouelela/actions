@@ -41,5 +41,5 @@ An index of all the currently maintained scripts, their description, and the lat
 [Semver]: https://semver.org/
 [Poetry]: https://python-poetry.org/
 
-[sp_badge]: https://img.shields.io/github/workflow/status/HassanAbouelela/actions/Test%20Setup-Python/main?label=Tests
+[sp_badge]: https://img.shields.io/github/actions/workflow/status/HassanAbouelela/actions/test_setup_python.yaml?label=Tests&branch=main
 [sp_link]: https://github.com/HassanAbouelela/actions/actions/workflows/test_setup_python.yaml?query=branch%3Amain
