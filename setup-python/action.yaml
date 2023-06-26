@@ -31,6 +31,11 @@ inputs:
     required: false
     default: "poetry"
 
+  checkout:
+    description: "Perform a checkout of the repository in the action. If this is false, this must be done manually before running the action."
+    required: false
+    default: "true"
+
   dev:
     description: "Install developer dependencies."
     required: false
@@ -51,6 +56,7 @@ runs:
   steps:
     # Checkout the code to get access to project files such as poetry and pre-commit configs
     - uses: actions/checkout@v3
+      if: ${{ inputs.checkout }} == true
 
     # Install python in our workflow
     - name: Setup python
@@ -67,7 +73,7 @@ runs:
         path: |
           ~/.cache/pypoetry
           ~/.cache/pip
-        key: "python-${{ runner.os }}-v1.4.0-\
+        key: "python-${{ runner.os }}-v1.4.1-\
         ${{ steps.python_setup.outputs.python-version }}-${{ inputs.dev }}-${{ inputs.working_dir }}-${{ inputs.poetry_version }}-${{ inputs.install_args }}-\
         ${{ hashFiles(format('{0}/pyproject.toml', inputs.working_dir), format('{0}/poetry.lock', inputs.working_dir)) }}"
 
@@ -77,7 +83,7 @@ runs:
       uses: actions/cache@v3
       with:
         path: ~/.cache/pre-commit
-        key: "precommit-${{ runner.os }}-v1.4.0-\
+        key: "precommit-${{ runner.os }}-v1.4.1-\
         ${{ steps.python_setup.outputs.python-version }}-${{ inputs.dev }}-${{ inputs.working_dir }}-${{ inputs.poetry_version }}-\
         ${{ hashFiles('./.pre-commit-config.yaml') }}"
 

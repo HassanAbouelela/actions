@@ -12,7 +12,7 @@ linked in the index below.
 > {name}_v{version}
 
 Example:
-> setup-python_v1.4.0
+> setup-python_v1.4.1
 
 
 ### Support Policy
@@ -33,7 +33,7 @@ An index of all the currently maintained scripts, their description, and the lat
 
 | Name                           | Version | Status                        | Description                                          |
 |--------------------------------|---------|-------------------------------|------------------------------------------------------|
-| [Setup Python](./setup-python) | 1.4.0   | [![tests][sp_badge]][sp_link] | Setup a [poetry][Poetry]-managed python environment. |
+| [Setup Python](./setup-python) | 1.4.1   | [![tests][sp_badge]][sp_link] | Setup a [poetry][Poetry]-managed python environment. |
 
 
 [License]: https://shields.io/github/license/HassanAbouelela/actions

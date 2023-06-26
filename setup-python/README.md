@@ -8,7 +8,7 @@ It also handles caching of pre-commit if you happen to be using that.
 You can use this action as follows:
 ```yaml
 - name: Install Python Dependencies
-  uses: HassanAbouelela/actions/setup-python@setup-python_v1.4.0
+  uses: HassanAbouelela/actions/setup-python@setup-python_v1.4.1
   with:
     install_args: "--without dev"
     python_version: '3.10'
@@ -25,6 +25,7 @@ The following inputs are required to use this action.
 | use_cache        | bool   | true    | Enable or disable the usage of cache, even if it is available.                                                                                       |
 | cache_pre-commit | bool   | true    | Enable caching and restoring pre-commit installs. Only a pre-commit config at the root workspace will be cached properly.                            |
 | install_args     | string |         | A string placed after the `poetry install` command, which can contain extra options.                                                                 |
+| checkout         | bool   | true    | Perform a checkout of the repository in the action. If this is false, this must be done manually before running the action.                          |
 | dev (deprecated) | bool   | true    | This argument is deprecated. Please use `install_args` with the appropriate options. This option will be removed in the next major release.          |
 
 ### Outputs
