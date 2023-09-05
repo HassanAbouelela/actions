@@ -143,8 +143,8 @@ jobs:
     strategy:
       matrix:
         version:
-          - "poetry==1.1.*"
-          - "poetry==1.2.*"
+          - "poetry==1.4.*"
+          - "poetry==1.5.*"
           - "git+https://github.com/python-poetry/poetry.git@master"
 
     steps:
