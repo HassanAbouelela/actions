@@ -55,7 +55,7 @@ runs:
 
   steps:
     # Checkout the code to get access to project files such as poetry and pre-commit configs
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       if: ${{ inputs.checkout }} == true
 
     # Install python in our workflow
