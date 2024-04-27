@@ -60,14 +60,14 @@ runs:
 
     # Install python in our workflow
     - name: Setup python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       id: python_setup
       with:
         python-version: ${{ inputs.python_version }}
 
     # Specify directories that require caching
     - name: Python Dependency Caching
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       id: python_cache
       with:
         path: |
@@ -80,7 +80,7 @@ runs:
     # Cache pre-commit independently of other cache
     - name: Pre-commit Environment Caching
       if: ${{ inputs.cache_pre-commit }} == true
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ~/.cache/pre-commit
         key: "precommit-${{ runner.os }}-v1.4.2-\
