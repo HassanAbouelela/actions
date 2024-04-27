@@ -73,7 +73,7 @@ runs:
         path: |
           ~/.cache/pypoetry
           ~/.cache/pip
-        key: "python-${{ runner.os }}-v1.4.2-\
+        key: "python-${{ runner.os }}-v1.5.0-\
         ${{ steps.python_setup.outputs.python-version }}-${{ inputs.dev }}-${{ inputs.working_dir }}-${{ inputs.poetry_version }}-${{ inputs.install_args }}-\
         ${{ hashFiles(format('{0}/pyproject.toml', inputs.working_dir), format('{0}/poetry.lock', inputs.working_dir)) }}"
 
@@ -83,7 +83,7 @@ runs:
       uses: actions/cache@v4
       with:
         path: ~/.cache/pre-commit
-        key: "precommit-${{ runner.os }}-v1.4.2-\
+        key: "precommit-${{ runner.os }}-v1.5.0-\
         ${{ steps.python_setup.outputs.python-version }}-${{ inputs.dev }}-${{ inputs.working_dir }}-${{ inputs.poetry_version }}-\
         ${{ hashFiles('./.pre-commit-config.yaml') }}"
 
