@@ -60,30 +60,30 @@ runs:
 
     # Install python in our workflow
     - name: Setup python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       id: python_setup
       with:
         python-version: ${{ inputs.python_version }}
 
     # Specify directories that require caching
     - name: Python Dependency Caching
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       id: python_cache
       with:
         path: |
           ~/.cache/pypoetry
           ~/.cache/pip
-        key: "python-${{ runner.os }}-v1.4.2-\
+        key: "python-${{ runner.os }}-v1.5.0-\
         ${{ steps.python_setup.outputs.python-version }}-${{ inputs.dev }}-${{ inputs.working_dir }}-${{ inputs.poetry_version }}-${{ inputs.install_args }}-\
         ${{ hashFiles(format('{0}/pyproject.toml', inputs.working_dir), format('{0}/poetry.lock', inputs.working_dir)) }}"
 
     # Cache pre-commit independently of other cache
     - name: Pre-commit Environment Caching
       if: ${{ inputs.cache_pre-commit }} == true
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ~/.cache/pre-commit
-        key: "precommit-${{ runner.os }}-v1.4.2-\
+        key: "precommit-${{ runner.os }}-v1.5.0-\
         ${{ steps.python_setup.outputs.python-version }}-${{ inputs.dev }}-${{ inputs.working_dir }}-${{ inputs.poetry_version }}-\
         ${{ hashFiles('./.pre-commit-config.yaml') }}"
 
