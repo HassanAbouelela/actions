@@ -36,6 +36,11 @@ inputs:
     required: false
     default: "true"
 
+  python_cmd:
+    description: "The python command to be used. If not specified, it defaults to just 'python'. Incompatible with 'python_version'."
+    required: false
+    default: ""
+
   dev:
     description: "Install developer dependencies."
     required: false
@@ -48,7 +53,7 @@ outputs:
     value: ${{ steps.python_cache.outputs.cache-hit }}
   python-version:
     description: "The full Python semver version used."
-    value: ${{ steps.python_setup.outputs.python-version }}
+    value: ${{ steps.python_ver.outputs.python-version }}
 
 runs:
   using: "composite"
@@ -56,14 +61,41 @@ runs:
   steps:
     # Checkout the code to get access to project files such as poetry and pre-commit configs
     - uses: actions/checkout@v4
-      if: ${{ inputs.checkout }} == true
+      if: inputs.checkout == 'true'
 
     # Install python in our workflow
     - name: Setup python
       uses: actions/setup-python@v5
+      if: inputs.python_cmd == ''
       id: python_setup
       with:
         python-version: ${{ inputs.python_version }}
+
+    # Export the selected python version
+    - name: Select Python Runtime
+      id: python_ver
+      shell: bash
+      run: |
+        echo "::group::Select Python Runtime"
+        if [ "${{ inputs.python_cmd }}" = "" ]; then
+          # We're using a normal setup-python install, just re-export the version
+          echo "python-version=${{ steps.python_setup.outputs.python-version }}" >> "$GITHUB_OUTPUT"
+          echo "python-cmd=python" >> "$GITHUB_OUTPUT"
+        else
+          # The user is bringing their own python version. Test it and export the version.
+          py_cmd="${{ inputs.python_cmd }}"
+          echo "Using python from: $py_cmd"
+          if ! command -v "$py_cmd" &> /dev/null; then
+            echo "Could not locate python command. Make sure it is available on path?"
+            echo "Path: $PATH"
+            echo "PWD: $PWD"
+            echo "CMD: $py_cmd"
+            exit 1
+          fi
+          echo "python-version=$($py_cmd -V | cut -d " " -f 2)" >> "$GITHUB_OUTPUT"
+          echo "python-cmd=$py_cmd" >> "$GITHUB_OUTPUT"
+        fi
+        echo "::endgroup::"
 
     # Specify directories that require caching
     - name: Python Dependency Caching
@@ -73,25 +105,26 @@ runs:
         path: |
           ~/.cache/pypoetry
           ~/.cache/pip
-        key: "python-${{ runner.os }}-v1.5.0-\
-        ${{ steps.python_setup.outputs.python-version }}-${{ inputs.dev }}-${{ inputs.working_dir }}-${{ inputs.poetry_version }}-${{ inputs.install_args }}-\
+        key: "python-${{ runner.os }}-v1.6.0-\
+        ${{ steps.python_ver.outputs.python-version }}-${{ inputs.dev }}-${{ inputs.working_dir }}-${{ inputs.poetry_version }}-${{ inputs.install_args }}-\
         ${{ hashFiles(format('{0}/pyproject.toml', inputs.working_dir), format('{0}/poetry.lock', inputs.working_dir)) }}"
 
     # Cache pre-commit independently of other cache
     - name: Pre-commit Environment Caching
-      if: ${{ inputs.cache_pre-commit }} == true
+      if: inputs.cache_pre-commit == 'true'
       uses: actions/cache@v4
       with:
         path: ~/.cache/pre-commit
-        key: "precommit-${{ runner.os }}-v1.5.0-\
-        ${{ steps.python_setup.outputs.python-version }}-${{ inputs.dev }}-${{ inputs.working_dir }}-${{ inputs.poetry_version }}-\
+        key: "precommit-${{ runner.os }}-v1.6.0-\
+        ${{ steps.python_ver.outputs.python-version }}-${{ inputs.dev }}-${{ inputs.working_dir }}-${{ inputs.poetry_version }}-\
         ${{ hashFiles('./.pre-commit-config.yaml') }}"
 
     - name: Install Poetry
       shell: bash
       run: |
         echo "::group::Install Poetry"
-        pip install ${{ inputs.poetry_version }}
+        echo "Installing poetry under python version ${{ steps.python_ver.outputs.python-version }}"
+        ${{ steps.python_ver.outputs.python-cmd }} -m pip install ${{ inputs.poetry_version }}
         echo "::endgroup::"
 
     - name: Install dependencies
@@ -111,18 +144,19 @@ runs:
 
         echo "::group::Install Dependencies"
         cd ${{ inputs.working_dir }}
+        py_cmd="${{ steps.python_ver.outputs.python-cmd }}"
 
-        if [[ "$(python -m poetry -V)" =~ .*"1.1.".* ]]; then
+        if [[ "$($py_cmd -m poetry -V)" =~ .*"1.1.".* ]]; then
           if [ "${{ inputs.dev }}" = "true" ]; then
-            python -m poetry install ${{ inputs.install_args }}
+            $py_cmd -m poetry install ${{ inputs.install_args }}
           else
-            python -m poetry install ${{ inputs.install_args }} --no-dev
+            $py_cmd -m poetry install ${{ inputs.install_args }} --no-dev
           fi
         else
           if [ "${{ inputs.dev }}" = "true" ]; then
-            python -m poetry install ${{ inputs.install_args }}
+            $py_cmd -m poetry install ${{ inputs.install_args }}
           else
-            python -m poetry install ${{ inputs.install_args }} --without dev
+            $py_cmd -m poetry install ${{ inputs.install_args }} --without dev
           fi
         fi
         echo "::endgroup::"
@@ -132,7 +166,8 @@ runs:
       run: |
         echo "::group::Configure Path"
         cd ${{ inputs.working_dir }}
-        echo "$(python -m poetry env info --path)/bin" >> $GITHUB_PATH
-        echo "Added $(python -m poetry env info --path)/bin to path"
-        python -m poetry -V
+        py_cmd="${{ steps.python_ver.outputs.python-cmd }}"
+        echo "$($py_cmd -m poetry env info --path)/bin" >> $GITHUB_PATH
+        echo "Added $($py_cmd -m poetry env info --path)/bin to path"
+        $py_cmd -m poetry -V
         echo "::endgroup::"
