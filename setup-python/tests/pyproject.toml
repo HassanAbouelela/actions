@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "project"
+name = "src"
 version = "1.6.0"
 description = "Simple project to test the setup-python action."
 authors = ["Hassan Abouelela <hassan@hassanamr.com>"]
